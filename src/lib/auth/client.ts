@@ -7,6 +7,7 @@ function generateToken(): string {
   window.crypto.getRandomValues(arr);
   return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
 }
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const user = {
   id: 'USR-000',
@@ -51,20 +52,37 @@ class AuthClient {
     return { error: 'Social authentication not implemented' };
   }
 
-  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
+  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string; accessToken?: string; refreshToken?: string; user?: User }> {
     const { email, password } = params;
-
-    // Make API request
-
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'sofia@devias.io' || password !== 'Secret1') {
-      return { error: 'Invalid credentials' };
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: email, password }),
+      });
+  
+      if (!response.ok) {
+        const { error } = await response.json();
+        return { error: error || 'Something went wrong' };
+      }
+  
+      const { accessToken, refreshToken, user } = await response.json();
+  
+      if (accessToken && refreshToken) {
+        localStorage.setItem('accessToken', result.body.accessToken);
+        localStorage.setItem('refreshToken', result.body.refreshToken);
+       
+      }
+      const token = generateToken();
+      localStorage.setItem('custom-auth-token', accessToken);
+      return { user };
+    } catch (err) {
+      console.error('Error during sign in:', err);
+      return { error: 'Something went wrong' };
     }
-
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
-
-    return {};
   }
 
   async resetPassword(_: ResetPasswordParams): Promise<{ error?: string }> {

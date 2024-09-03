@@ -34,7 +34,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
       <Box
         sx={{
           alignItems: 'center',
-          background: 'radial-gradient(50% 50% at 50% 50%, #122647 0%, #090E23 100%)',
+          background: 'radial-gradient(50% 50% at 50% 50%, #5C9AD7 0%, #635bff 100%)',
           color: 'var(--mui-palette-common-white)',
           display: { xs: 'none', lg: 'flex' },
           justifyContent: 'center',
@@ -43,15 +43,13 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
       >
         <Stack spacing={3}>
           <Stack spacing={1}>
-            <Typography color="inherit" sx={{ fontSize: '24px', lineHeight: '32px', textAlign: 'center' }} variant="h1">
-              Welcome to{' '}
-              <Box component="span" sx={{ color: '#15b79e' }}>
-                Devias Kit
+            <Typography color="inherit" sx={{color: '#fffff', fontSize: '24px', lineHeight: '32px', textAlign: 'center' }} variant="h1">
+              Bienvenido a {' '}
+              <Box component="span" sx={{ color: '#fffff' }}>
+                Cremeria Rosita
               </Box>
             </Typography>
-            <Typography align="center" variant="subtitle1">
-              A professional template that comes with ready-to-use MUI components.
-            </Typography>
+           
           </Stack>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Box
