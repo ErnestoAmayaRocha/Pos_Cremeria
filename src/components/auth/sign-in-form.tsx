@@ -29,7 +29,7 @@ const schema = zod.object({
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { email: 'sofia@devias.io', password: 'Secret1' } satisfies Values;
+const defaultValues = { email: '', password: '' } satisfies Values;
 
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
@@ -76,7 +76,7 @@ export function SignInForm(): React.JSX.Element {
         <Typography color="text.secondary" variant="body2">
          No tienes cuenta?{' '}
           <Link component={RouterLink} href={paths.auth.signUp} underline="hover" variant="subtitle2">
-            Sign up
+            Registrate
           </Link>
         </Typography>
       </Stack>
@@ -129,7 +129,7 @@ export function SignInForm(): React.JSX.Element {
           />
           <div>
             <Link component={RouterLink} href={paths.auth.resetPassword} variant="subtitle2">
-              olvidaste tu contraseña?
+              Olvidaste tu contraseña?
             </Link>
           </div>
           {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
@@ -138,16 +138,7 @@ export function SignInForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert color="warning">
-        Use{' '}
-        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          sofia@devias.io
-        </Typography>{' '}
-        with password{' '}
-        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          Secret1
-        </Typography>
-      </Alert>
+      
     </Stack>
   );
 }

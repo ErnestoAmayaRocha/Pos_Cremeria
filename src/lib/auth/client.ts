@@ -66,7 +66,7 @@ class AuthClient {
   
       if (!response.ok) {
         const { error } = await response.json();
-        return { error: error || 'Something went wrong' };
+        return { error: error || 'Algo salio mal' }; 
       }
   
       const { accessToken, refreshToken, user } = await response.json();
@@ -81,7 +81,7 @@ class AuthClient {
       return { user };
     } catch (err) {
       console.error('Error during sign in:', err);
-      return { error: 'Something went wrong' };
+      return { error: 'Algo salio mal' };
     }
   }
 
