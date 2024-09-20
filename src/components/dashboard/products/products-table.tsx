@@ -1,133 +1,103 @@
 'use client';
 
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
-import Stack from '@mui/material/Stack';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import dayjs from 'dayjs';
+import { AgGridReact } from 'ag-grid-react';
 
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 
+import { Card, TextField } from '@mui/material';
+import InputAdornment from '@mui/material/InputAdornment';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 
-import { useSelection } from '@/hooks/use-selection';
-
-function noop(): void {
-  // do nothing
-}
-
-export interface Customer {
+export interface Product {
   id: string;
-  avatar: string;
   name: string;
-  email: string;
-  address: { city: string; state: string; country: string; street: string };
-  phone: string;
+  price: number;
+  description: string;
+  category: string;
+  stock: number;
   createdAt: Date;
 }
+const quickFilterText = 'new filter text';
+export function ProductsTable(): React.JSX.Element {
+  const [rowData, setRowData] = React.useState<Product[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [quickFilterText, setQuickFilterText] = React.useState('');
+  const columnDefs = [
+    { headerName: 'ID', field: 'id', sortable: true, filter: true },
+    { headerName: 'Nombre', field: 'name', sortable: true, filter: true },
+    { headerName: 'Precio', field: 'price', sortable: true, filter: true },
+    { headerName: 'Descripcion', field: 'description', sortable: true, filter: true },
+    { headerName: 'Categoria', field: 'category', sortable: true, filter: true },
+    { headerName: 'Stock', field: 'stock', sortable: true, filter: true },
+    {
+      headerName: 'Fecha Creacion',
+      field: 'createdAt',
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
+    },
+  ];
 
-interface CustomersTableProps {
-  count?: number;
-  page?: number;
-  rows?: Customer[];
-  rowsPerPage?: number;
-}
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products`); 
+      if (!response.ok) {
+        throw new Error('Error fetching products');
+      }
+      const data = await response.json();
+      const formattedProducts = data.body.products.map((product: any) => ({
+        id: product._id,
+        name: product.name,
+        price: `${"$"+product.price}`,
+        description: product.description,
+        category: product.category,
+        stock: product.stock,
+        createdAt: product.createdAt,
+      }));
+      setRowData(formattedProducts);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-export function ProductsTable({
-  count = 0,
-  rows = [],
-  page = 0,
-  rowsPerPage = 0,
-}: CustomersTableProps): React.JSX.Element {
-  const rowIds = React.useMemo(() => {
-    return rows.map((customer) => customer.id);
-  }, [rows]);
+  React.useEffect(() => {
+    fetchProducts();
+  }, []);
 
-  const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
-
-  const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
-  const selectedAll = rows.length > 0 && selected?.size === rows.length;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <Card>
-      <Box sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: '800px' }}>
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectedAll}
-                  indeterminate={selectedSome}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      selectAll();
-                    } else {
-                      deselectAll();
-                    }
-                  }}
-                />
-              </TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Signed Up</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => {
-              const isSelected = selected?.has(row.id);
-
-              return (
-                <TableRow hover key={row.id} selected={isSelected}>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={isSelected}
-                      onChange={(event) => {
-                        if (event.target.checked) {
-                          selectOne(row.id);
-                        } else {
-                          deselectOne(row.id);
-                        }
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.name}</Typography>
-                    </Stack>
-                  </TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>
-                    {row.address.city}, {row.address.state}, {row.address.country}
-                  </TableCell>
-                  <TableCell>{row.phone}</TableCell>
-                  <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Box>
-      <Divider />
-      <TablePagination
-        component="div"
-        count={count}
-        onPageChange={noop}
-        onRowsPerPageChange={noop}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
+    <Card sx={{  padding: '1.5rem' }}>
+      <Card  sx={{ p: 2,   width:'100%' }}>
+        <OutlinedInput
+          defaultValue=""
+          fullWidth
+          onChange={event => setQuickFilterText(event.target.value)}
+          placeholder="Buscar producto"
+          startAdornment={
+            <InputAdornment position="start">
+              <MagnifyingGlassIcon fontSize="var(--icon-fontSize-md)" />
+            </InputAdornment>
+          }
+          sx={{ maxWidth: '100%' }}
+        />
+      </Card>
+      <div className="ag-theme-alpine" style={{ height: '550px', width: '100%', marginTop:'1rem' }}>
+        <AgGridReact
+          quickFilterText={quickFilterText}
+          columnDefs={columnDefs}
+          rowData={rowData}
+          pagination={true}
+          paginationPageSize={10}
+        />
+      </div>
     </Card>
   );
 }
