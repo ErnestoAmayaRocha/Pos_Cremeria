@@ -1,4 +1,5 @@
-// AddProductModal.jsx
+/* eslint-disable react/function-component-definition */
+
 "use client";
 
 import * as React from 'react';
@@ -93,7 +94,7 @@ const AddProductModal = () => {
                             fullWidth
                             margin="normal"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => {setName(e.target.value)}}
                             required
                         />
                         <TextField
@@ -103,7 +104,7 @@ const AddProductModal = () => {
                             margin="normal"
                             type="number"
                             value={price}
-                            onChange={(e) => setPrice(e.target.value)}
+                            onChange={(e) => {setPrice(e.target.value)}}
                             required
                         />
                         <TextField
@@ -114,7 +115,7 @@ const AddProductModal = () => {
                             multiline
                             rows={4}
                             value={description}
-                            onChange={(e) => setDescription(e.target.value)}
+                            onChange={(e) => {setDescription(e.target.value)}}
                             required
                         />
                         <TextField
@@ -123,7 +124,7 @@ const AddProductModal = () => {
                             fullWidth
                             margin="normal"
                             value={category}
-                            onChange={(e) => setCategory(e.target.value)}
+                            onChange={(e) => {setCategory(e.target.value)}}
                             required
                         />
                         <TextField
@@ -133,7 +134,7 @@ const AddProductModal = () => {
                             margin="normal"
                             type="number"
                             value={stock}
-                            onChange={(e) => setStock(e.target.value)}
+                            onChange={(e) => {setStock(e.target.value)}}
                             required
                         />
                         <Button type="submit" variant="contained" color="primary">
