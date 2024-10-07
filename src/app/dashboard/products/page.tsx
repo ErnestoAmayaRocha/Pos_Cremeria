@@ -13,7 +13,7 @@ import { config } from '@/config';
 import { ProductsTable } from '@/components/dashboard/products/products-table';
 
 
-export const metadata = { title: `Customers | Dashboard | ${config.site.name}` } satisfies Metadata;
+export const metadata = { title: `Productos | Dashboard | ${config.site.name}` } satisfies Metadata;
 
 
 export default function Page(): React.JSX.Element {
@@ -32,9 +32,7 @@ export default function Page(): React.JSX.Element {
         </div>
       </Stack>
     
-      <ProductsTable
-       
-      />
+      <ProductsTable/>
     </Stack>
   );
 }

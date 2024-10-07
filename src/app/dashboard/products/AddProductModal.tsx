@@ -146,6 +146,7 @@ const AddProductModal = () => {
 
             {/* Snackbar para éxito */}
             <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleSuccessClose}>
+                
                 <Alert onClose={handleSuccessClose} severity="success" sx={{ width: '100%' }}>
                     Producto agregado con éxito.
                 </Alert>
